@@ -12,17 +12,18 @@ window.onload = function() {
   //     }, 5000);
   //   }, 5000);
   // }, 5000);
-
-  buildMenu();
-  window.setTimeout(function(){clearBody();buildQuestion(quote_oneSentence_zero[0].question);
-    window.setTimeout(function(){clearBody();buildAnswer(quote_oneSentence_zero[0]);
-      window.setTimeout(function(){clearBody();buildResults(session_results);
-        window.setTimeout(function(){clearBody();buildMenu();
-        }, 5000);
-      }, 5000);
-    }, 5000);
-  }, 5000);
-
+  //
+  // buildMenu();
+  // window.setTimeout(function(){clearBody();buildQuestion(quote_oneSentence_zero[0].question);
+  //   window.setTimeout(function(){clearBody();buildAnswer(quote_oneSentence_zero[0]);
+  //     window.setTimeout(function(){clearBody();buildResults(session_results);
+  //       window.setTimeout(function(){clearBody();buildMenu();
+  //       }, 5000);
+  //     }, 5000);
+  //   }, 5000);
+  // }, 5000);
+var books = [1,1,1,1,1,1,1,1,1,1,1,1,1];
+console.log(generate_proportion(books));
 
 };
 

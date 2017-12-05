@@ -22,6 +22,65 @@ class results{
   }
 }
 
+function options_construct(){
+
+}
+
+function generate_proportion(booklist){
+  //function to generate random proportions for included books
+  var bookCount = 0;
+  var total = 100;
+
+  //determine number of books in question
+  for (var i = 0; i < booklist.length; i++) {
+    bookCount += booklist[i];
+  }
+
+  //determine acceptable bounds for proportions
+  var average = Math.floor(100/bookCount);
+  var max = Math.floor(average * 1.5);
+  var min = Math.floor(average * 0.8);
+
+  //calculate proportions
+  var proportionList = [];
+  for (var i = 1; i < bookCount; i++) {
+    var proportion = Math.floor(Math.random() * (max - min) ) + min;
+    proportionList.push(proportion);
+    total = total - proportion;
+  }
+
+  //sets last proportion to remaining percentage -> often heavily weights single option
+  proportionList.push(total);
+
+  // //test algorithm -> proportions should always sum to 100
+  // var hundred = Number(0);
+  // for (var i = 0; i < proportionList.length; i++) {
+  //   hundred = hundred + Number(proportionList[i]);
+  // }
+  // console.log("This should be a hundred: " + hundred)
+
+  return proportionList;
+}
+
+class quiz_session{
+  constructor(options){
+    this.bookList = options[0];
+
+    this.questionType = options[1];
+    this.questionCount = options[2];
+    this.questionTimer = options[3];
+    this.questionRepeat = options[4];
+
+    this.answerType = options[5]
+    this.answerTimer = options[6];
+    this.answerInput = options[7];
+
+    this.generalSound = options[8];
+    this.generalProgressBar = options[9];
+    this.generalTimer = options[10];
+  }
+}
+
 var all_authors = [
   "----",                         // no response
   "Barber, Tiki",                 // #0
