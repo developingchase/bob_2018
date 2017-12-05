@@ -23,8 +23,9 @@ window.onload = function() {
   //   }, 5000);
   // }, 5000);
 var books = [1,1,1,1,1,1,1,1,1,1,1,1,1];
-console.log(generate_proportion(books));
-
+var optionList = [books, false,300,-1,false,0,-1,0,false,false,false];
+var test = new quiz_session(optionList);
+console.log(test.proportions);
 };
 
 var session_results = new results();
