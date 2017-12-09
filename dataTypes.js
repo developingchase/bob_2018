@@ -1,4 +1,5 @@
 class tuple{
+  //question object
   constructor(question,source,author,title){
     this.question = question;
     this.source = source;
@@ -7,34 +8,13 @@ class tuple{
   }
 }
 
-class results{
-  constructor(){
-    this.total = 0;
-    this.correct = 0;
-    this.percentage = 0;
-  }
-  update(boolean_correct){
-    this.total += 1;
-    if(boolean_correct){
-      this.correct+= 1;
-    }
-    this.percentage = Math.floor((this.correct / this.total)*100);
-  }
-}
-
 function options_construct(){
-
+  //function to read config from html and store settings in array
 }
 
-function generate_proportion(booklist,questionCount){
+function generate_proportion(bookCount,questionCount){
   //function to generate random proportions for included books
-  var bookCount = 0;
   var total = questionCount;
-  //determine number of books in question
-  for (var i = 0; i < booklist.length; i++) {
-    bookCount += booklist[i];
-  }
-
 
   if (total < 0) {
   //questions are infinite, no need to randomize proportions
@@ -81,7 +61,9 @@ class quiz_session{
   // one class to handle all quiz session data
   // export function for debug
   constructor(options){
+    //takes array from options_construct
     this.bookList = options[0];       //list of 0/1 values
+    this.bookCount = countBooks(this.booklist);
 
     this.questionType = options[1];   // true is spoken, false is text
     this.questionCount = options[2];  // integer value, -1 is infinite
@@ -97,10 +79,87 @@ class quiz_session{
     this.generalTimer = options[10];      // false timer not displayed, true timer displayed
 
     this.proportions = generate_proportion(this.bookList, this.questionCount);
+
+    //generate question list
+    generateQuiz(this.questionCount);
+
+    //initialize session stats
+    this.stats = new statisticsTracker();
+
+  }
+
+  countBooks(booklist){
+    var bookCount = 0;
+    //determine number of books in question
+    for (var i = 0; i < booklist.length; i++) {
+      bookCount += booklist[i];
+    }
+    return bookCount;
+  }
+
+  displayOptions(){
+    // return array of options for display decisions - intended for html build function
+    return [this.generalSound,this.generalProgressBar,this.generalTimer];
+  }
+
+  generateQuiz(){
+    //assembles list of questions
+  }
+
+  nextQuestion(){
+    //return question information
+  }
+
+  gradeResponse(){
+    //grades response and updates stats
+  }
+
+  nextAnswer(){
+    //return answer information
+  }
+
+  stats(){
+    //returns session information
+  }
+
+  debug(comment){
+    //returns class state with appended comment from user
+
   }
 
 }
 
+class statisticsTracker {
+  constructor() {
+    this.questionCount;
+    this.totalAuthor_correct;
+    this.totalAuthor_incorrect;
+    this.totalTitle_correct;
+    this.totalTitle_incorrect;
+
+    this.points;
+    this.pointsMax;
+
+    this.ByAuthor_total;
+    this.ByAuthor_correct;
+    this.ByAuthor_incorrect;
+    this.ByTitle_total;
+    this.ByTitle_correct;
+    this.ByTitle_incorrect;
+  }
+
+  percentage(num,denom){
+    //percentage calc
+    if(denom > 0){
+    return Math.floor((num / denom)*100);
+    }
+    else {
+      return 0;
+    }
+  }
+}
+
+//array of author names
 var all_authors = [
   "----",                         // no response
   "Barber, Tiki",                 // #1
@@ -118,6 +177,7 @@ var all_authors = [
   "Woodson, Jacqueline",          // #13
 ];
 
+//array of book titles
 var all_books = [
   "----",                                                   // no response
   "Kickoff!",                                               // #1
@@ -134,6 +194,7 @@ var all_books = [
   "Edible Science: Experiments You Can Eat",                // #12
   "Brown Girl Dreaming",                                    // #13
 ];
+
 
 function questionList(int_questions,bool_multiset,bool_array_bookList) {
   //super placeholdery ->
