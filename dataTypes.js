@@ -82,6 +82,8 @@ class quiz_session{
 
     //generate question list
     generateQuiz(this.questionCount);
+    var this.currentQuestion;
+    var this.currentQuestionBonus = false;  //bonus question boolean flag
 
     //initialize session stats
     this.stats = new statisticsTracker();
@@ -97,33 +99,70 @@ class quiz_session{
     return bookCount;
   }
 
-  displayOptions(){
+  giveDisplayOptions(){
     // return array of options for display decisions - intended for html build function
     return [this.generalSound,this.generalProgressBar,this.generalTimer];
   }
 
-  generateQuiz(){
+  generateQuestions(){
     //assembles list of questions
   }
 
-  nextQuestion(){
+  chooseQuestion(){
+    //selects question from list, updates quiz session
+  }
+
+  giveQuestion(){
     //return question information
   }
 
-  gradeResponse(){
-    //grades response and updates stats
+  receiveResponse(){
+    //receives user input and stores
   }
 
-  nextAnswer(){
+  gradeResponse(){
+    //grades stored user input and updates stats
+    var pointAward = [0,2];
+    var authorCorrect = false;
+    var titleCorrect = false;
+
+    if(responseTitle === this.currentQuestion[3]){
+      //title correct
+      if(responseAuthor === this.currentQuestion[2]){
+        //both correct, full credit
+        pointAward[0] = 2;
+      }
+      else if (responseAuthor === all_authors[0]) {
+        //no response for author, partial credit
+        pointAward[0] = 1;
+      }
+      else{
+        //author incorrect
+        pointAward[0] = 0;
+      }
+    }
+    else {
+      //title incorrect
+      pointAward[0] = 0;
+    }
+    if this.currentQuestionBonus{
+      // bonus questions worth double
+      pointAward[0] = pointAward[0] * 2;
+      pointAward[1] = 4;
+    }
+    this.stats.addPoints(pointAward);
+  }
+
+  giveAnswer(){
     //return answer information
   }
 
-  stats(){
+  giveStats(){
     //returns session information
   }
 
   debug(comment){
-    //returns class state with appended comment from user
+    //returns class state with appended comment from user to csv
 
   }
 
@@ -156,6 +195,10 @@ class statisticsTracker {
     else {
       return 0;
     }
+  }
+
+  addPoints(points){
+    this.points += points;
   }
 }
 
