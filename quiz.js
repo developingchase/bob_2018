@@ -1,7 +1,6 @@
-
+//quiz runtime and relevant functions
 
 window.onload = function() {
-  console.log(quote_oneSentence_zero[0].question);
 
   // buildMenu();
   // window.setTimeout(function(){clearDivs(tracker_menu_id);buildQuestion(quote_oneSentence_zero[0].question);
@@ -22,13 +21,25 @@ window.onload = function() {
   //     }, 5000);
   //   }, 5000);
   // }, 5000);
-var books = [1,1,1,1,1,1,1,1,1,1,1,1,1];
+
+// var books = [1,1,1,1,1,1,1,1,1,1,1,1,1,1]; //'all' books
+// var books = [0,1,1,1,1,1,1,1,1,1,1,1,1,1]; // all books selected
+var books = [0,1,1,1,0,1,1,1,1,0,1,1,1,0]; // No Lemoncello,Maxi's,BrownGirldreaming
+
 var optionList = [books, false,300,-1,false,0,-1,0,false,false,false];
 var test = new quiz_session(optionList);
-console.log(test.proportions);
+
 };
 
-var session_results = new results();
+
+function options_construct(){
+  //function to read config from html and store settings in array
+}
+
+function response_construct(){
+  //function to read user input from html and store as tupleQuestion
+}
+
 
 // html element builders
 
@@ -105,6 +116,8 @@ function clearBody(){
     body.removeChild(body.firstChild);
   }
 }
+
+
 
 // build html element functions
 var tracker_menu_id = [];
