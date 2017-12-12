@@ -31,7 +31,7 @@ class quiz_session{
     this.generalProgressBar = options[9]; // false no bar, true has bar
     this.generalTimer = options[10];      // false timer not displayed, true timer displayed
 
-    this.proportions = this.generate_proportion(this.bookList, this.questionCount);
+    this.proportions = this.generateProportion(this.bookList, this.questionCount);
 
     //generate question list
     this.currentQuestion;
@@ -76,6 +76,8 @@ class quiz_session{
 
   generateQuestions(){
     //assembles list of questions and MC choices
+
+    //MC choices
     for (var i = 1; i <= this.bookList.length; i++) {
       if(this.bookList[i] > 0){
         //book selected for inclusion, [1] is #1
@@ -84,6 +86,8 @@ class quiz_session{
         this.currentSources.push(all_sources[i]);
       }
     }
+
+    this.proportions
   }
   // function questionList(int_questions,bool_multiset,bool_array_bookList) {
   //   //super placeholdery ->
@@ -155,7 +159,7 @@ class quiz_session{
     //returns session information
   }
 
-  generate_proportion(bookCount,questionCount){
+  generateProportion(bookCount,questionCount){
     //function to generate random proportions for included books
     var total = questionCount;
 
