@@ -26,9 +26,20 @@ window.onload = function() {
 // var books = [0,1,1,1,1,1,1,1,1,1,1,1,1,1]; // all books selected
 var books = [0,1,1,1,0,1,1,1,1,0,1,1,1,0]; // No Lemoncello,Maxi's,BrownGirldreaming
 
-var optionList = [books, false,300,-1,false,0,-1,0,false,false,false];
+// var optionList = [books, false,300,-1,false,0,-1,0,false,false,false]; //worst case
+var optionList = [books, false, 25,-1,false,0,-1,0,false,false,false];
+
 var test = new quiz_session(optionList);
 
+console.log(test.proportions);
+console.log(test.questionList);
+for (var i = 0; i < test.questionList.length; i++) {
+  test.chooseQuestion();
+}
+test.chooseQuestion();
+test.chooseQuestion();
+test.chooseQuestion();
+console.log(test.currentQuestion);
 };
 
 

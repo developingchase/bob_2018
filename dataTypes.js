@@ -31,7 +31,7 @@ class quiz_session{
     this.generalProgressBar = options[9]; // false no bar, true has bar
     this.generalTimer = options[10];      // false timer not displayed, true timer displayed
 
-    this.proportions = this.generateProportion(this.bookList, this.questionCount);
+    this.proportions = this.generateProportion(this.bookCount, this.questionCount);
 
     //generate question list
     this.currentQuestion;
@@ -42,7 +42,9 @@ class quiz_session{
     this.currentAuthors = ["----"];
     this.currentSources = ["----"];
 
-    this.generateQuestions(this.questionCount);
+    this.questionList = [];
+    this.usedQuestions = [];
+    this.generateQuestions(this.proportions);
 
     //user input tracker
     var responseTracker = [];
@@ -74,7 +76,7 @@ class quiz_session{
     return [this.generalSound,this.generalProgressBar,this.generalTimer];
   }
 
-  generateQuestions(){
+  generateQuestions(proportionValues){
     //assembles list of questions and MC choices
 
     //MC choices
@@ -87,24 +89,77 @@ class quiz_session{
       }
     }
 
-    this.proportions
+
+    for (var i = 1; i < this.bookList.length; i++) {
+      //book is included, start at #1
+      if(this.bookList[i] > 0){
+        //questions for i book
+        var count = proportionValues.shift();
+        var indexTracker = [];
+        var questionIndex;
+
+        //generate count number of questions
+        for (var j = 0; j < count; j++) {
+          //random index within specified questionSet
+          questionIndex = this.randIndex(all_questionSets[i]);
+          if(this.questionRepeat){
+            //repeats allowed
+            this.questionList.push(all_questionSets[i][questionIndex]);
+          }
+          else {
+            //check for repeats, find new index
+            var infiniteBeGone = 0;   //attempts to find new question 5 times
+            while (indexTracker.includes(questionIndex) && infiniteBeGone < 5) {
+              questionIndex = this.randIndex(all_questionSets[i]);
+              infiniteBeGone += 1;
+            }
+            indexTracker.push(questionIndex);
+            this.questionList.push(all_questionSets[i][questionIndex]);
+          }
+        }
+      }
+    }
   }
-  // function questionList(int_questions,bool_multiset,bool_array_bookList) {
-  //   //super placeholdery ->
-  //   //int_questions -> number of questions to generate
-  //   //bool_multiset -> whether or not to allow duplicate questions
-  //   //bool_array_bookList -> array of size 13, indicates whether to include corresponding book
-  //   //generates random number in range of questions
-  //   //dependent on bool_multiset, checks if unique
-  //   //continues until have int_questions numbers
-  //   //returns array of indexes for tuples
-  //   //books are sectioned -> question bank of 1300, each book has 100 entries 0-99
-  //   //outlaw ranges bool_array_bookList dependent
-  //   return Math.random();
-  // }
 
   chooseQuestion(){
     //selects question from list, updates quiz session
+    var questionIndex = this.randIndex(this.questionList);
+    console.log(this.usedQuestions);
+
+    var infiniteBeGone = 0;   //attempts to find new question 5 times
+    while (this.usedQuestions.includes(questionIndex) && infiniteBeGone < 5) {
+      questionIndex = this.randIndex(this.questionList);
+      infiniteBeGone += 1;
+    }
+    //fallback if random indexes fail
+    if(this.usedQuestions.includes(questionIndex)){
+      //find unused index
+      for (var i = 0; i < this.questionList.length; i++) {
+        //check all indexes of questionList
+        if(this.usedQuestions.includes(i)){
+          //in case all questions have been used
+          questionIndex = -1;
+          continue;
+        }
+        else {
+          //unused index is new index
+          questionIndex = i;
+          this.usedQuestions.push(i);
+          break;
+        }
+      }
+    }
+    else {
+      this.usedQuestions.push(questionIndex);
+    }
+    if (questionIndex < 0) {
+      //set currentQuestion to debug tuple
+      this.currentQuestion = all_questionSets[0][0];
+    }
+    else {
+      //set currentQuestion
+      this.currentQuestion = this.questionList[questionIndex];
+    }
   }
 
   gradeResponse(response){
@@ -159,13 +214,28 @@ class quiz_session{
     //returns session information
   }
 
+  randIndex(dataset){
+    //takes dataset, returns random index within that dataset
+    var index;
+    var max = dataset.length - 1;
+    var min = 0;
+    var index = Math.floor(Math.random() * (max - min) ) + min;
+    return index;
+  }
+
   generateProportion(bookCount,questionCount){
     //function to generate random proportions for included books
     var total = questionCount;
 
     if (total < 0) {
     //questions are infinite, no need to randomize proportions
-      return [-1];
+      var proportionList = [];
+
+      //for each included book, add 25 questions
+      for (var i = 0; i < bookCount; i++) {
+        proportionList.push(25);
+      }
+      return proportionList;
     }
     else{
     //determine acceptable bounds for proportions
@@ -176,6 +246,7 @@ class quiz_session{
 
       //calculate proportions
       var proportionList = [];
+
       for (var i = 1; i < bookCount; i++) {
         //random integer in range
         var proportion = Math.floor(Math.random() * (max - min) ) + min;

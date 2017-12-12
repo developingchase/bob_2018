@@ -98,7 +98,8 @@ function myMergeSort(left,right){
 //   ];
 // var quote_testSet = probablyUnnecessaryMergeSort(quote_testSet1);
 
-var quote_testSet = [
+var questionSet_zero = [
+   new tupleQuestion("---Debug Me---","---Debug Me---","---Debug Me---","---Debug Me---"),
    new tupleQuestion("I'm a question! #1","I'm a source! #1","Malone, Lee Gjertsen","The Last Boy at St. Edith's"),
    new tupleQuestion("I'm a question! #2","I'm a source! #2","I don't show up on multiple choice!","Which makes me always wrong!"),
    new tupleQuestion("I'm a question! #3","I'm a source! #3","Malone, Lee Gjertsen","The Last Boy at St. Edith's"),
@@ -106,12 +107,29 @@ var quote_testSet = [
    new tupleQuestion("I'm a question! #5","I'm a duplicate source!","Malone, Lee Gjertsen","The Last Boy at St. Edith's"),
   ];
 
+  var all_sources = [
+    "----",
+    sourceListGen(questionSet_zero)
+  ]
 
-var all_sources = [
-  "----",
-  sourceListGen(quote_testSet)
-]
 
+//list of datasets - serves as index
+  var all_questionSets = [
+    questionSet_zero,             // test questionSet
+    questionSet_one,              // #1
+    questionSet_two,              // #2
+    questionSet_three,            // #3
+    questionSet_four,             // #4
+    questionSet_five,             // #5
+    questionSet_six,              // #6
+    questionSet_seven,            // #7
+    questionSet_eight,            // #8
+    questionSet_nine,             // #9
+    questionSet_ten,              // #10
+    questionSet_eleven,           // #11
+    questionSet_twelve,           // #12
+    questionSet_thirteen,         // #13
+  ];
 
 
 //array of author names
