@@ -124,7 +124,6 @@ class quiz_session{
   chooseQuestion(){
     //selects question from list, updates quiz session
     var questionIndex = this.randIndex(this.questionList);
-    console.log(this.usedQuestions);
 
     var infiniteBeGone = 0;   //attempts to find new question 5 times
     while (this.usedQuestions.includes(questionIndex) && infiniteBeGone < 5) {
