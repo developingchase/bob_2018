@@ -12,18 +12,20 @@ window.onload = function() {
   //     }, 5000);
   //   }, 5000);
   // }, 5000);
-
-  buildMenu();
-  window.setTimeout(function(){clearBody();buildQuestion(quote_oneSentence_zero[0].question);
-    window.setTimeout(function(){clearBody();buildAnswer(quote_oneSentence_zero[0]);
-      window.setTimeout(function(){clearBody();buildResults(session_results);
-        window.setTimeout(function(){clearBody();buildMenu();
-        }, 5000);
-      }, 5000);
-    }, 5000);
-  }, 5000);
-
-
+  //
+  // buildMenu();
+  // window.setTimeout(function(){clearBody();buildQuestion(quote_oneSentence_zero[0].question);
+  //   window.setTimeout(function(){clearBody();buildAnswer(quote_oneSentence_zero[0]);
+  //     window.setTimeout(function(){clearBody();buildResults(session_results);
+  //       window.setTimeout(function(){clearBody();buildMenu();
+  //       }, 5000);
+  //     }, 5000);
+  //   }, 5000);
+  // }, 5000);
+var books = [1,1,1,1,1,1,1,1,1,1,1,1,1];
+var optionList = [books, false,300,-1,false,0,-1,0,false,false,false];
+var test = new quiz_session(optionList);
+console.log(test.proportions);
 };
 
 var session_results = new results();
