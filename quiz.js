@@ -1,34 +1,64 @@
-
+//quiz runtime and relevant functions
 
 window.onload = function() {
-  console.log(quote_oneSentence_zero[0].question);
 
-  // buildMenu();
-  // window.setTimeout(function(){clearDivs(tracker_menu_id);buildQuestion(quote_oneSentence_zero[0].question);
-  //   window.setTimeout(function(){clearDivs(tracker_question_id);buildAnswer(quote_oneSentence_zero[0]);
-  //     window.setTimeout(function(){clearDivs(tracker_answer_id);buildResults(session_results);
-  //       window.setTimeout(function(){clearDivs(tracker_results_id);buildMenu();
-  //       }, 5000);
-  //     }, 5000);
-  //   }, 5000);
-  // }, 5000);
-  //
-  // buildMenu();
-  // window.setTimeout(function(){clearBody();buildQuestion(quote_oneSentence_zero[0].question);
-  //   window.setTimeout(function(){clearBody();buildAnswer(quote_oneSentence_zero[0]);
-  //     window.setTimeout(function(){clearBody();buildResults(session_results);
-  //       window.setTimeout(function(){clearBody();buildMenu();
-  //       }, 5000);
-  //     }, 5000);
-  //   }, 5000);
-  // }, 5000);
-var books = [1,1,1,1,1,1,1,1,1,1,1,1,1];
-var optionList = [books, false,300,-1,false,0,-1,0,false,false,false];
+// var books = [1,1,1,1,1,1,1,1,1,1,1,1,1,1]; //'all' books
+// var books = [0,1,1,1,1,1,1,1,1,1,1,1,1,1]; // all books selected
+var books = [0,1,1,1,0,1,1,1,1,0,1,1,1,0]; // No Lemoncello,Maxi's,BrownGirldreaming
+
+// var optionList = [books, false,300,-1,false,0,-1,0,false,false,false]; //worst case
+var optionList = [books, false, 25,-1,false,0,-1,0,false,false,false];
+
 var test = new quiz_session(optionList);
-console.log(test.proportions);
+test.chooseQuestion();
+
+buildQuestion(test.currentQuestion.question);
+button = document.getElementById("question_button_submit");
+button.onclick = function(){
+  clearDivs(tracker_question_id);
+  buildAnswer(test.currentQuestion);
+  button = document.getElementById("answer_button_next");
+  button.onclick = function(){
+    clearDivs(tracker_answer_id);
+    test.chooseQuestion();
+    buildQuestion(test.currentQuestion.question);
+  };
+
+
 };
 
-var session_results = new results();
+
+
+};
+
+
+function question(){
+  buildQuestion(test.currentQuestion.question);
+  button = document.getElementById("question_button_submit");
+  button.onclick = function(){
+    clearDivs(tracker_question_id);
+    answer();
+  };
+}
+
+function answer(){
+  buildAnswer(test.currentQuestion);
+  button = document.getElementById("answer_button_next");
+  button.onclick = function(){
+    clearDivs(tracker_answer_id);
+    test.chooseQuestion();
+    question();
+  };
+}
+
+function options_construct(){
+  //function to read config from html and store settings in array
+}
+
+function response_construct(){
+  //function to read user input from html and store as tupleQuestion
+}
+
 
 // html element builders
 
@@ -105,6 +135,8 @@ function clearBody(){
     body.removeChild(body.firstChild);
   }
 }
+
+
 
 // build html element functions
 var tracker_menu_id = [];

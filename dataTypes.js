@@ -1,4 +1,6 @@
-class tuple{
+//data types for quiz
+
+class tupleQuestion{
   //question object
   constructor(question,source,author,title){
     this.question = question;
@@ -8,62 +10,13 @@ class tuple{
   }
 }
 
-function options_construct(){
-  //function to read config from html and store settings in array
-}
-
-function generate_proportion(bookCount,questionCount){
-  //function to generate random proportions for included books
-  var total = questionCount;
-
-  if (total < 0) {
-  //questions are infinite, no need to randomize proportions
-    return [-1];
-  }
-  else{
-  //determine acceptable bounds for proportions
-    var average = Math.ceil(total/bookCount);
-    //more extreme values increase likelihood of exceeding 100%
-    var max = Math.floor(average * 1.2);
-    var min = Math.floor(average * 0.8);
-
-    //calculate proportions
-    var proportionList = [];
-    for (var i = 1; i < bookCount; i++) {
-      //random integer in range
-      var proportion = Math.floor(Math.random() * (max - min) ) + min;
-      proportionList.push(proportion);
-      total = total - proportion;
-    }
-
-    if(total < 0){
-    //exceeded 100% - subtract overage from second to last value, use overage as last value
-      proportionList[proportionList.length - 1] = proportionList[proportionList.length - 1] + total;
-      proportionList.push(Math.abs(total));
-    }
-    else{
-    //sets last proportion to remaining percentage
-      proportionList.push(total);
-    }
-
-    // //test algorithm -> proportions should always sum to 100
-    // var count = Number(0);
-    // for (var i = 0; i < proportionList.length; i++) {
-    //   count = count + Number(proportionList[i]);
-    // }
-    // console.log("This should be the question count: " + count)
-
-    return proportionList;
-  }
-}
-
 class quiz_session{
   // one class to handle all quiz session data
   // export function for debug
   constructor(options){
     //takes array from options_construct
-    this.bookList = options[0];       //list of 0/1 values
-    this.bookCount = countBooks(this.booklist);
+    this.bookList = options[0];       //list of 0/1 values, first value is 'all'
+    this.bookCount = this.countBooks(this.bookList);
 
     this.questionType = options[1];   // true is spoken, false is text
     this.questionCount = options[2];  // integer value, -1 is infinite
@@ -78,10 +31,23 @@ class quiz_session{
     this.generalProgressBar = options[9]; // false no bar, true has bar
     this.generalTimer = options[10];      // false timer not displayed, true timer displayed
 
-    this.proportions = generate_proportion(this.bookList, this.questionCount);
+    this.proportions = this.generateProportion(this.bookCount, this.questionCount);
 
     //generate question list
-    generateQuiz(this.questionCount);
+    this.currentQuestion;
+    this.currentQuestionBonus = false;  //bonus question boolean flag
+
+    //multiple choice options -> first value is blank
+    this.currentTitles = ["----"];
+    this.currentAuthors = ["----"];
+    this.currentSources = ["----"];
+
+    this.questionList = [];
+    this.usedQuestions = [];
+    this.generateQuestions(this.proportions);
+
+    //user input tracker
+    var responseTracker = [];
 
     //initialize session stats
     this.stats = new statisticsTracker();
@@ -91,39 +57,225 @@ class quiz_session{
   countBooks(booklist){
     var bookCount = 0;
     //determine number of books in question
-    for (var i = 0; i < booklist.length; i++) {
-      bookCount += booklist[i];
+    if(booklist[0] < 1){
+      //user selection
+      for (var i = 1; i < booklist.length; i++) {
+        bookCount += booklist[i];
+      }
+    }
+    else {
+      //'all'
+      bookCount = (booklist.length - 1);
     }
     return bookCount;
+
   }
 
-  displayOptions(){
+  giveDisplayOptions(){
     // return array of options for display decisions - intended for html build function
     return [this.generalSound,this.generalProgressBar,this.generalTimer];
   }
 
-  generateQuiz(){
-    //assembles list of questions
+  generateQuestions(proportionValues){
+    //assembles list of questions and MC choices
+
+    //MC choices
+    for (var i = 1; i <= this.bookList.length; i++) {
+      if(this.bookList[i] > 0){
+        //book selected for inclusion, [1] is #1
+        this.currentTitles.push(all_books[i]);
+        this.currentAuthors.push(all_authors[i]);
+        this.currentSources.push(all_sources[i]);
+      }
+    }
+
+
+    for (var i = 1; i < this.bookList.length; i++) {
+      //book is included, start at #1
+      if(this.bookList[i] > 0){
+        //questions for i book
+        var count = proportionValues.shift();
+        var indexTracker = [];
+        var questionIndex;
+
+        //generate count number of questions
+        for (var j = 0; j < count; j++) {
+          //random index within specified questionSet
+          questionIndex = this.randIndex(all_questionSets[i]);
+          if(this.questionRepeat){
+            //repeats allowed
+            this.questionList.push(all_questionSets[i][questionIndex]);
+          }
+          else {
+            //check for repeats, find new index
+            var infiniteBeGone = 0;   //attempts to find new question 5 times
+            while (indexTracker.includes(questionIndex) && infiniteBeGone < 5) {
+              questionIndex = this.randIndex(all_questionSets[i]);
+              infiniteBeGone += 1;
+            }
+            indexTracker.push(questionIndex);
+            this.questionList.push(all_questionSets[i][questionIndex]);
+          }
+        }
+      }
+    }
   }
 
-  nextQuestion(){
-    //return question information
+  chooseQuestion(){
+    //selects question from list, updates quiz session
+    var questionIndex = this.randIndex(this.questionList);
+
+    var infiniteBeGone = 0;   //attempts to find new question 5 times
+    while (this.usedQuestions.includes(questionIndex) && infiniteBeGone < 5) {
+      questionIndex = this.randIndex(this.questionList);
+      infiniteBeGone += 1;
+    }
+    //fallback if random indexes fail
+    if(this.usedQuestions.includes(questionIndex)){
+      //find unused index
+      for (var i = 0; i < this.questionList.length; i++) {
+        //check all indexes of questionList
+        if(this.usedQuestions.includes(i)){
+          //in case all questions have been used
+          questionIndex = -1;
+          continue;
+        }
+        else {
+          //unused index is new index
+          questionIndex = i;
+          this.usedQuestions.push(i);
+          break;
+        }
+      }
+    }
+    else {
+      this.usedQuestions.push(questionIndex);
+    }
+    if (questionIndex < 0) {
+      //set currentQuestion to debug tuple
+      this.currentQuestion = all_questionSets[0][0];
+    }
+    else {
+      //set currentQuestion
+      this.currentQuestion = this.questionList[questionIndex];
+    }
   }
 
-  gradeResponse(){
-    //grades response and updates stats
+  gradeResponse(response){
+    //receives user input, stores, and grades, then updates stats
+    //response should be a tuple
+    var pointAward = [0,2]; //[current points, possible points]
+
+    //store response
+    this.responseTracker.push(response);
+
+    if(this.answerType < 2){
+      //not tracking chapters
+      if(response.title === this.currentQuestion.title){
+        //title correct
+        if(response.author === this.currentQuestion.author){
+          //both correct, full credit
+          pointAward[0] = 2;
+        }
+        else if (response.author === all_authors[0]) {
+          //no response for author, partial credit
+          pointAward[0] = 1;
+        }
+        else{
+          //author incorrect
+          pointAward[0] = 0;
+        }
+      }
+      else {
+        //title incorrect
+        pointAward[0] = 0;
+      }
+      if (this.currentQuestionBonus) {
+        // bonus questions worth double
+        pointAward[0] = pointAward[0] * 2;
+        pointAward[1] = 4;
+      }
+    }
+    else {
+      //tracking chapters - no partial credit
+      if(response.title === this.currentQuestion.title){
+        if(response.author === this.currentQuestion.author){
+          if(response.source === this.currentQuestion.source){
+            pointAward[0] = 2;
+          }
+        }
+      }
+    }
+    this.stats.addPoints(pointAward);
   }
 
-  nextAnswer(){
-    //return answer information
-  }
-
-  stats(){
+  giveStats(){
     //returns session information
   }
 
+  randIndex(dataset){
+    //takes dataset, returns random index within that dataset
+    var index;
+    var max = dataset.length - 1;
+    var min = 0;
+    var index = Math.floor(Math.random() * (max - min) ) + min;
+    return index;
+  }
+
+  generateProportion(bookCount,questionCount){
+    //function to generate random proportions for included books
+    var total = questionCount;
+
+    if (total < 0) {
+    //questions are infinite, no need to randomize proportions
+      var proportionList = [];
+
+      //for each included book, add 25 questions
+      for (var i = 0; i < bookCount; i++) {
+        proportionList.push(25);
+      }
+      return proportionList;
+    }
+    else{
+    //determine acceptable bounds for proportions
+      var average = Math.ceil(total/bookCount);
+      //more extreme values increase likelihood of exceeding 100%
+      var max = Math.floor(average * 1.2);
+      var min = Math.floor(average * 0.8);
+
+      //calculate proportions
+      var proportionList = [];
+
+      for (var i = 1; i < bookCount; i++) {
+        //random integer in range
+        var proportion = Math.floor(Math.random() * (max - min) ) + min;
+        proportionList.push(proportion);
+        total = total - proportion;
+      }
+
+      if(total < 0){
+      //exceeded 100% - subtract overage from second to last value, use overage as last value
+        proportionList[proportionList.length - 1] = proportionList[proportionList.length - 1] + total;
+        proportionList.push(Math.abs(total));
+      }
+      else{
+      //sets last proportion to remaining percentage
+        proportionList.push(total);
+      }
+
+      // //test algorithm -> proportions should always sum to 100
+      // var count = Number(0);
+      // for (var i = 0; i < proportionList.length; i++) {
+      //   count = count + Number(proportionList[i]);
+      // }
+      // console.log("This should be the question count: " + count)
+
+      return proportionList;
+    }
+  }
+
   debug(comment){
-    //returns class state with appended comment from user
+    //returns class state with appended comment from user to csv
 
   }
 
@@ -157,55 +309,8 @@ class statisticsTracker {
       return 0;
     }
   }
-}
 
-//array of author names
-var all_authors = [
-  "----",                         // no response
-  "Barber, Tiki",                 // #1
-  "Bradley, Kimberly Brubaker",   // #2
-  "Deutsch, Barry",               // #3
-  "Grabenstein, Chris",           // #4
-  "Hannigan, Kate",               // #5
-  "Jones, Kelly",                 // #6
-  "Konigsburg, E. L.",            // #7
-  "Malone, Lee Gjertsen",         // #8
-  "Plourde, Lynn",                // #9
-  "Roman, Dave",                  // #10
-  "Rusch, Elizabeth",             // #11
-  "Wheeler-Toppen, Jodi",         // #12
-  "Woodson, Jacqueline",          // #13
-];
-
-//array of book titles
-var all_books = [
-  "----",                                                   // no response
-  "Kickoff!",                                               // #1
-  "The War That Saved My Life",                             // #2
-  "Hereville: How Mirka Got Her Sword",                     // #3
-  "Mr. Lemoncello's Library Olympics",                      // #4
-  "The Detective's Assistant",                              // #5
-  "Unusual Chickens for the Exceptional Poultry Farmer",    // #6
-  "From the Mixed-Up Files of Mrs. Basil E. Frankweiler",   // #7
-  "The Last Boy at St. Edith's",                            // #8
-  "Maxi's Secrets:(Or, What You Can Learn from a Dog)",     // #9
-  "Astronaut Academy: Zero Gravity",                        // #10
-  "Eruption!: Volcanoes and the Science of Saving Lives",   // #11
-  "Edible Science: Experiments You Can Eat",                // #12
-  "Brown Girl Dreaming",                                    // #13
-];
-
-
-function questionList(int_questions,bool_multiset,bool_array_bookList) {
-  //super placeholdery ->
-  //int_questions -> number of questions to generate
-  //bool_multiset -> whether or not to allow duplicate questions
-  //bool_array_bookList -> array of size 13, indicates whether to include corresponding book
-  //generates random number in range of questions
-  //dependent on bool_multiset, checks if unique
-  //continues until have int_questions numbers
-  //returns array of indexes for tuples
-  //books are sectioned -> question bank of 1300, each book has 100 entries 0-99
-  //outlaw ranges bool_array_bookList dependent
-  return Math.random();
+  addPoints(points){
+    this.points += points;
+  }
 }
