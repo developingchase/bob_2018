@@ -14,6 +14,7 @@ class quiz_session{
   // one class to handle all quiz session data
   // export function for debug
   constructor(options){
+    this.options = options;
     //takes array from options_construct
     this.bookList = options[0];       //list of 0/1 values, first value is 'all'
     this.bookCount = this.countBooks(this.bookList);
@@ -47,7 +48,7 @@ class quiz_session{
     this.generateQuestions(this.proportions);
 
     //user input tracker
-    var responseTracker = [];
+    this.responseTracker = [];
 
     //initialize session stats
     this.stats = new statisticsTracker();
@@ -223,7 +224,8 @@ class quiz_session{
   }
 
   generateProportion(bookCount,questionCount){
-    //function to generate random proportions for included books
+    //function to generate random proportions
+    //splits number of questions up between included books unevenly
     var total = questionCount;
 
     if (total < 0) {
@@ -275,8 +277,49 @@ class quiz_session{
   }
 
   debug(comment){
-    //returns class state with appended comment from user to csv
+    //downloads a tsv with appended comment from user
+    var data = [
+    this.options
+    this.bookList
+    this.bookCount
+    this.questionType
+    this.questionCount
+    this.questionTimer
+    this.questionRepeat
+    this.answerType
+    this.answerTimer
+    this.answerInput
+    this.generalSound
+    this.generalProgressBar
+    this.generalTimer
+    this.proportions
+    //generate question list
+    this.currentQuestion;
+    this.currentQuestionBonus
+    //multiple choice options -> first value is blank
+    this.currentTitles = ["----"];
+    this.currentAuthors = ["----"];
+    this.currentSources = ["----"];
+    this.questionList = [];
+    this.usedQuestions = [];
+    //user input tracker
+    this.responseTracker = [];
+    //initialize session stats
+    // this.stats
 
+        var csv = 'Name,Title\n';
+        data.forEach(function(row) {
+                csv += row.join(',');
+                csv += "\n";
+        });
+
+        //https://code-maven.com/create-and-download-csv-with-javascript
+        console.log(csv);
+        var hiddenElement = document.createElement('a');
+        hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+        hiddenElement.target = '_blank';
+        hiddenElement.download = 'people.csv';
+        hiddenElement.click();
   }
 
 }
