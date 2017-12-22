@@ -278,49 +278,39 @@ class quiz_session{
 
   debug(comment){
     //downloads a tsv with appended comment from user
-    var data = [
-    this.options
-    this.bookList
-    this.bookCount
-    this.questionType
-    this.questionCount
-    this.questionTimer
-    this.questionRepeat
-    this.answerType
-    this.answerTimer
-    this.answerInput
-    this.generalSound
-    this.generalProgressBar
-    this.generalTimer
-    this.proportions
-    //generate question list
-    this.currentQuestion;
-    this.currentQuestionBonus
-    //multiple choice options -> first value is blank
-    this.currentTitles = ["----"];
-    this.currentAuthors = ["----"];
-    this.currentSources = ["----"];
-    this.questionList = [];
-    this.usedQuestions = [];
-    //user input tracker
-    this.responseTracker = [];
-    //initialize session stats
-    // this.stats
-
-        var csv = 'Name,Title\n';
-        data.forEach(function(row) {
-                csv += row.join(',');
-                csv += "\n";
-        });
-
-        //https://code-maven.com/create-and-download-csv-with-javascript
-        console.log(csv);
-        var hiddenElement = document.createElement('a');
-        hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
-        hiddenElement.target = '_blank';
-        hiddenElement.download = 'people.csv';
-        hiddenElement.click();
-  }
+  //   var data = [
+  //   this.options
+  //   this.bookCount
+  //   this.proportions
+  //   //generate question list
+  //   this.currentQuestion
+  //   this.currentQuestionBonus
+  //   //multiple choice options -> first value is blank
+  //   this.currentTitles
+  //   this.currentAuthors
+  //   this.currentSources
+  //   this.questionList
+  //   this.usedQuestions
+  //   //user input tracker
+  //   this.responseTracker
+  //   //initialize session stats
+  //   // this.stats
+  //
+  //
+  //       var csv = 'Name,Title\n';
+  //       data.forEach(function(row) {
+  //               csv += row.join(',');
+  //               csv += "\n";
+  //       });
+  //
+  //       //https://code-maven.com/create-and-download-csv-with-javascript
+  //       console.log(csv);
+  //       var hiddenElement = document.createElement('a');
+  //       hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+  //       hiddenElement.target = '_blank';
+  //       hiddenElement.download = 'people.csv';
+  //       hiddenElement.click();
+  // }
 
 }
 
