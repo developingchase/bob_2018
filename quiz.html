@@ -4,6 +4,11 @@
       <meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
       <title>Book Battle 2018 - Practice Quiz</title>
 
+      <!-- Pull Bootstrap resources -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
 		    <!-- Data types -->
         <script type="text/javascript" src="dataTypes.js"></script>
 
@@ -30,6 +35,52 @@
     </head>
 
     <body id="body_main">
-
+<!-- comment added -->
+<div class="container">
+<div class="row" id="main_container">
+    <div class="col-xs-2 col-sm-2 col-med-2 col-lg-2"><!-- spacer column--></div>
+    <div class="col-xs-8 col-sm-8 col-med-8 col-lg-8">
+    <!-- Main contents here -->
+      <div class="well" align="center"><h1>Battle of the Books 2018 Quiz</h1></div>
+      <div class="row" id="questions">
+          <div class="col">
+              <blockquote id="question_div_1"></blockquote>
+          </div>
+      </div>
+      <div class="row" id="print_results" display="none">
+          <div class="row" id="raw_score"></div>
+          <div class="row" id="provided_answers"></div>
+      </div>
+      <form>
+      <div class="row" id="answers_authors">
+        <div class="form-group">
+          <label for="authors_select_1">Select author:</label>
+          <select class="form-control" id="authors_select_1">
+            <!-- This is where we pull the list of authors and push them into LI fields below -->
+          </select>
+        </div>
+      </div>
+      <div class="row" id="answers_titles">
+          <div class="form-group">
+            <label for="titles_select_1">Select title:</label>
+            <select class="form-control" id="titles_select_1">
+            <!-- This is where we pull the list of titles and push them into LI fields below -->
+          </select>
+        </div>
+      </div>
+      <div class="row" id="user_actions">
+        <button type="button" class="btn btn-primary btn-block" id="submit">Submit Answer</button>
+        <button type="button" class="btn btn-success btn-block" id="newQuestion">Generate New Question</button>
+      </div>
+    </form>
+      <div class="row" id="statistics">
+      </div>
+      <div class="row" id="history">
+      </div>
+    </div>
+  </div>
+<div class="col-xs-2 col-sm-2 col-med-2 col-lg-2"><!-- spacer column--></div>
+</div>
+</div>
     </body>
 </html>

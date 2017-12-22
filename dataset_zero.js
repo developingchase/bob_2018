@@ -32,51 +32,6 @@ function sourceListGen(questionSet) {
   return out;
 }
 
-
-//not currently functional
-function probablyUnnecessaryMergeSort(dataset) {
-  var length = dataset.length;
-  var midpoint = Math.floor(length * 0.5);
-  var left = dataset.slice(0,midpoint);
-  var right = dataset.slice(midpoint,length);
-
-  if(length === 1){
-    return dataset;
-  }
-  myMergeSort(probablyUnnecessaryMergeSort(left), probablyUnnecessaryMergeSort(right));
-  return dataset;
-}
-
-function myMergeSort(left,right){
-  var out = [];
-  //while either block non-empty
-  while (left.length || right.length){
-    //both blocks non-empty
-    if (left.length && right.length){
-      // localeCompare might work, we'll see
-      if(left[0].source < right[0].source){
-        //left is smaller - goodbye
-        out.push(left.shift());
-      }
-      else {
-        out.push(right.shift());
-        //right is smaller - goodbye
-      }
-    }
-
-    //one side sorted, append rest of values
-    else if (left.length) {
-      //all of lefts remaining values appended onto end of out
-        out.push(left.shift());
-    }
-    else {
-      //all of rights remaining values appended onto end of out
-      out.push(right.shift());
-    }
-  }
-  return out;
-}
-
 //test vars
 
 
