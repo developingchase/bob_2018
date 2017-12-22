@@ -310,7 +310,7 @@ class quiz_session{
   //       hiddenElement.target = '_blank';
   //       hiddenElement.download = 'people.csv';
   //       hiddenElement.click();
-  // }
+  }
 
 }
 

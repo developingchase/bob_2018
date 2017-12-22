@@ -16,15 +16,14 @@ window.onload = function() {
   buildQuestion(test.currentQuestion.question);
   button = document.getElementById("question_button_submit");
   button.onclick = function(){
-    test.debug();
-    // clearDivs(tracker_question_id);
-    // buildAnswer(test.currentQuestion);
-    // button = document.getElementById("answer_button_next");
-    // button.onclick = function(){
-    //   clearDivs(tracker_answer_id);
-    //   test.chooseQuestion();
-    //   buildQuestion(test.currentQuestion.question);
-    // };
+    clearDivs(tracker_question_id);
+    buildAnswer(test.currentQuestion);
+    button = document.getElementById("answer_button_next");
+    button.onclick = function(){
+      clearDivs(tracker_answer_id);
+      test.chooseQuestion();
+      buildQuestion(test.currentQuestion.question);
+    };
   };
 };
 
