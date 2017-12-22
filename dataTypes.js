@@ -208,6 +208,7 @@ class quiz_session{
       }
     }
     this.stats.addPoints(pointAward);
+    return pointAward;
   }
 
   giveStats(){
